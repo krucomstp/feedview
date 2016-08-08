@@ -1,0 +1,66 @@
+	<script src="../jquery.js"></script>
+	<script src="../jquery.flot.js"></script>
+	<script src="../jquery.flot.time.js"></script>
+	<script src="../feedview.js"></script>
+
+	<script>
+		
+		setInterval(function insertGraph() {
+		  	$.getJSON( "https://api2.netpie.io/feed/piesensor?apikey=GFLAKvCH2RCSKlmx&granularity=seconds&timezone=7&data=humid&aggregate=avg&since=10minutes", function(datajson) { 
+				var option = {
+					name : "Piesensor Graph",
+					xaxis : "time",
+					yaxis : "value",
+					hookyaxis : false,//true,false
+					// max:60,
+					// min:0,
+					type : "line", //bar,line,step
+					pointer : true, //true,false
+					// color : ['#d40000']
+				}
+				updateChart('chart1',datajson,option);
+			});
+			return insertGraph;
+		}(), 15000);
+
+
+		setInterval(function insertGraph() {
+			var api = {
+				name :"piesensor",
+				key:"GFLAKvCH2RCSKlmx",
+				granularity:"seconds",
+				data:["humid","light","temp"],
+				aggregate:"avg",
+				since:"10minutes",
+			}
+			var option = {
+				name : "Piesensor Graph",
+				xaxis : "time",
+				yaxis : "value",
+				hookyaxis : false,//true,false
+				// max:60,
+				// min:0,
+				type : "line", //bar,line,step
+				pointer : true, //true,false
+				// color : ['#d40000']
+			}
+			insertChart(api,"chart3",option)
+			return insertGraph;
+		}(), 15000);
+
+	</script>
+			<div style="width:700px;height:500px;margin:auto">
+			<div id="chart1"></div>
+			</div>
+			
+			<br>
+
+			<div style="width:100%;height:100%;margin:auto">
+			<div id="chart3"></div>
+			<div>
+			
+			
+
+
+
+
