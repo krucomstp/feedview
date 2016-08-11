@@ -1,12 +1,12 @@
 	<script src="../jquery.js"></script>
-	<script src="../jquery.flot.js"></script>
-	<script src="../jquery.flot.time.js"></script>
-	<script src="../feedview.js"></script>
+<!-- 	<script src="../jquery.flot.js"></script>
+	<script src="../jquery.flot.time.js"></script> -->
+	<script src="../netpie.feedview.js"></script>
 
 	<script>
 		
 		setInterval(function insertGraph() {
-		  	$.getJSON( "https://api2.netpie.io/feed/piesensor?apikey=GFLAKvCH2RCSKlmx&granularity=seconds&timezone=7&data=humid&aggregate=avg&since=10minutes", function(datajson) { 
+		  	$.getJSON( "https://api2.netpie.io/feed/piesensor?apikey=GFLAKvCH2RCSKlmx&granularity=days&timezone=7&data=humid&aggregate=avg&since=1months", function(datajson) { 
 				var option = {
 					name : "Piesensor Graph",
 					xaxis : "time",
@@ -28,10 +28,10 @@
 			var api = {
 				name :"piesensor",
 				key:"GFLAKvCH2RCSKlmx",
-				granularity:"seconds",
+				granularity:"days",
 				data:["humid","light","temp"],
 				aggregate:"avg",
-				since:"10minutes",
+				since:"1months",
 			}
 			var option = {
 				name : "Piesensor Graph",
