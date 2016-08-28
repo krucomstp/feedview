@@ -117,6 +117,7 @@ function updateChart(chartDIV,datajson,option) {
 	
 	var chartdata = [];
 	if (datajson) {
+		var numcolor = color.length;
 		for (var i=0; i<datajson.data.length; i++) {
 			// max = 0;
 			var s = {data: [], label: datajson.data[i].attr, points:{symbol:"circle"}}
@@ -139,7 +140,7 @@ function updateChart(chartDIV,datajson,option) {
 			}
 			chartdata.push(s);
 			if(i>=color.length){
-				color[color.length] = "black";
+				color[color.length] = color[i%numcolor];
 		   	}
 		}
 	}
