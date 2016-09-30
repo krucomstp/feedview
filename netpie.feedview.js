@@ -215,7 +215,7 @@ function updateChart(chartDIV, datajson, option) {
         var count = 0;
         if (datajson) {
             var numcolor = color.length;
-            if (datajson.data.length > 1) {
+            if (datajson.data.length => 1) {
                 for (var i = 0; i < datajson.data.length; i++) {
                     var maxi;
                     var mini;

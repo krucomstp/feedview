@@ -3,7 +3,7 @@
 <script src="../netpie.feedview.js">
 </script>
 <script>
-      setInterval(function insertGraph() {
+      setInterval(function insertGraph1() {
 		  	$.getJSON( "https://api2.netpie.io/feed/piesensor?apikey=GFLAKvCH2RCSKlmx&granularity=days&aggregate=avg&since=1months", function(datajson) {
 				var option = {
 		   			// title : "Piesensor Graph",
@@ -18,9 +18,9 @@
 		        }
 				updateChart('chart1',datajson,option);
 			});
-			return insertGraph;
+			return insertGraph1;
 		}(), 15000);
-		setInterval(function insertGraph() {
+		setInterval(function insertGraph1() {
 		  	$.getJSON( "https://api2.netpie.io/feed/piesensor?apikey=GFLAKvCH2RCSKlmx&granularity=hours&aggregate=avg&since=7days", function(datajson) {
 				var option = {
 		            title : "Piesensor Graph",
@@ -35,7 +35,7 @@
 		        }
 				updateChart('chart2',datajson,option);
 			});
-			return insertGraph;
+			return insertGraph1;
 		}(), 15000);
 </script>
 <div style="width:600px;height:400px;margin:auto">
