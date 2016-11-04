@@ -12,92 +12,6 @@ function n(n) {
     return n > 9 ? "" + n : "0" + n;
 }
 
-function getGap(typetime, compare, time1, time2, index) {
-    console.log(typetime + " " + compare + " " + time1[0] + " " + time2[0] + " " + index)
-    if (typetime == "seconds") {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var second = d.getSeconds();
-            d.setSeconds(d.getSeconds() - parseInt(compare));
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    retrun[d.getTime(), null];
-                } else {
-                    retrun[time2, null];
-                }
-            }
-        }
-    } else if (typetime == "minutes") {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var minute = d.getMinutes();
-            d.setMinutes(d.getMinutes() - parseInt(compare));
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    retrun[d.getTime(), null];
-                } else {
-                    retrun[time2, null];
-                }
-            }
-        }
-    } else if (typetime == "hours") {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var minute = d.getHours();
-            d.setHours(d.getHours() - parseInt(compare));
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    retrun[d.getTime(), null];
-                } else {
-                    retrun[time2, null];
-                }
-            }
-        }
-    } else if (typetime == "days") {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var day = d.getDate();
-            d.setDate(d.getDate() - parseInt(compare));
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    d.setDate(d.getDate() - parseInt(compare));
-                    retrun[d.getTime(), null];
-                } else {
-                    d.setDate(d.getDate() - parseInt(compare));
-                    retrun[time2, null];
-                }
-            }
-        }
-    } else if (typetime == "months") {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var month = d.getMonth();
-            d.setMonth(d.getMonth() - parseInt(compare));
-            console.log(d.getTime())
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    retrun[d.getTime(), null];
-                } else {
-                    retrun[time2, null];
-                }
-            }
-        }
-    } else {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var year = d.getFullYear();
-            d.setFullYear(d.getFullYear() - parseInt(compare));
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    retrun[d.getTime(), null];
-                } else {
-                    retrun[time2, null];
-                }
-            }
-        }
-    }
-}
-
 function updateChart(chartDIV, datajson, option) {
     var oldgraph = document.getElementById(chartDIV).innerHTML;
     const DEFAULTCOLOR = ['#d40000', '#1569ea', '#ffcc00']
@@ -118,9 +32,10 @@ function updateChart(chartDIV, datajson, option) {
     var maxY = [];
     var minY = [];
     var color;
-    if ($("#" + chartDIV).find("#" + chartDIV + "_graph").length > 0) {
-        $("#" + chartDIV).empty();
-    }
+    var unit =[];
+    // if ($("#" + chartDIV).find("#" + chartDIV + "_graph").length > 0) {
+    $("#" + chartDIV).empty();
+    // }
     try {
         if (option === undefined) {
             optionGraph = defaultGraph;
@@ -215,8 +130,9 @@ function updateChart(chartDIV, datajson, option) {
         var count = 0;
         if (datajson) {
             var numcolor = color.length;
-            if (datajson.data.length > 1) {
+            if (datajson.data.length >= 1) {
                 for (var i = 0; i < datajson.data.length; i++) {
+                    unit[unit.length] = [datajson.data[i].attr,datajson.data[i].unit];
                     var maxi;
                     var mini;
                     var test = 0;
@@ -548,7 +464,15 @@ function updateChart(chartDIV, datajson, option) {
                 noColumns: 5,
                 container: '#' + chartDIV + '_legend',
                 labelFormatter: function(label, series) {
-                    return '&nbsp;' + label + '&nbsp;&nbsp;';
+                    uniti = "";
+                    for (var i = unit.length - 1; i >= 0; i--) {
+                        if(unit[i][0]==label){
+                            if(unit[i][1].length>0){
+                                uniti = "("+unit[i][1]+")"
+                            }
+                        }
+                    }
+                    return '&nbsp;' + label +uniti;
                 }
             },
             series: optionGraph,
@@ -595,7 +519,13 @@ function updateChart(chartDIV, datajson, option) {
                     var newDate = new Date(parseInt(x));
                     var listDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                     var listMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                    var tooltiptext = listDays[newDate.getDay()] + " " + listMonths[newDate.getMonth()] + " " + n(newDate.getDate()) + " " + newDate.getFullYear() + " " + n(newDate.getHours()) + ":" + n(newDate.getMinutes()) + ":" + n(newDate.getSeconds()) + "<br>" + item.series.label + " = " + y;
+                    uniti = "";
+                    for (var i = unit.length - 1; i >= 0; i--) {
+                        if(unit[i][0]==item.series.label){
+                            uniti =unit[i][1]
+                        }
+                    }
+                    var tooltiptext = listDays[newDate.getDay()] + " " + listMonths[newDate.getMonth()] + " " + n(newDate.getDate()) + " " + newDate.getFullYear() + " " + n(newDate.getHours()) + ":" + n(newDate.getMinutes()) + ":" + n(newDate.getSeconds()) + "<br>" + item.series.label + " = " + y+" "+uniti;
                     $("#tooltip").html(tooltiptext).css({
                         top: item.pageY + 5,
                         left: item.pageX + 5

@@ -3,10 +3,10 @@
 <script src="../netpie.feedview.js">
 </script>
 <script>
-      setInterval(function insertGraph() {
-		  	$.getJSON( "https://api2.netpie.io/feed/piesensor?apikey=GFLAKvCH2RCSKlmx&granularity=days&aggregate=avg&since=1months", function(datajson) {
+      setInterval(function insertGraph1() {
+		  	$.getJSON( "https://api.netpie.io/feed/testfeed?apikey=gBZqaJuEAJkLUXmu6GprbCYEnlOFHDft&granularity=1minutes&aggregate=avg&since=12hours", function(datajson) {
 				var option = {
-		   			// title : "Piesensor Graph",
+		   			title : "Twitter Bot",
 					// xaxis : "time",
 					// yaxis : "value",
 		            multipleaxis : false,
@@ -16,27 +16,44 @@
 		            marker : false, //true,false
 		            filter : ""
 		        }
-				updateChart('chart1',datajson,option);
+				updateChart('chart2',datajson,option);
 			});
-			return insertGraph;
+			return insertGraph1;
 		}(), 15000);
-		setInterval(function insertGraph() {
-		  	$.getJSON( "https://api2.netpie.io/feed/piesensor?apikey=GFLAKvCH2RCSKlmx&granularity=hours&aggregate=avg&since=7days", function(datajson) {
+      setInterval(function insertGraph1() {
+		  	$.getJSON( "https://api.netpie.io/feed/pmt003?apikey=HpZ0YZfNpkM7h4718Ewy8ODgthkEMIj9&granularity=10minutes&aggregate=avg&since=1days", function(datajson) {
 				var option = {
 		            title : "Piesensor Graph",
 					xaxis : "time",
 					yaxis : "value",
 		            multipleaxis : false,
 		            yzero: false,
-		            // color: ,
+		            color: "pink,blue,yellow,black,red",
 		            type : "line", //line,step
 		            marker : false, //true,false
 		            filter : ""
 		        }
-				updateChart('chart2',datajson,option);
+				updateChart('chart1',datajson,option);
 			});
-			return insertGraph;
+			return insertGraph1;
 		}(), 15000);
+		// setInterval(function insertGraph1() {
+		//   	$.getJSON( "https://api.netpie.io/feed/piesensor?apikey=GFLAKvCH2RCSKlmx&granularity=1hours&data=humid,temp,light&aggregate=avg&since=7days", function(datajson) {
+		// 		var option = {
+		//             title : "Piesensor Graph",
+		// 			xaxis : "time",
+		// 			yaxis : "value",
+		//             multipleaxis : false,
+		//             yzero: false,
+		//             // color: ,
+		//             type : "line", //line,step
+		//             marker : false, //true,false
+		//             filter : ""
+		//         }
+		// 		updateChart('chart1',datajson,option);
+		// 	});
+		// 	return insertGraph1;
+		// }(), 15000);
 </script>
 <div style="width:600px;height:400px;margin:auto">
     <div id="chart1">
