@@ -12,92 +12,6 @@ function n(n) {
     return n > 9 ? "" + n : "0" + n;
 }
 
-function getGap(typetime, compare, time1, time2, index) {
-    console.log(typetime + " " + compare + " " + time1[0] + " " + time2[0] + " " + index)
-    if (typetime == "seconds") {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var second = d.getSeconds();
-            d.setSeconds(d.getSeconds() - parseInt(compare));
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    retrun[d.getTime(), null];
-                } else {
-                    retrun[time2, null];
-                }
-            }
-        }
-    } else if (typetime == "minutes") {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var minute = d.getMinutes();
-            d.setMinutes(d.getMinutes() - parseInt(compare));
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    retrun[d.getTime(), null];
-                } else {
-                    retrun[time2, null];
-                }
-            }
-        }
-    } else if (typetime == "hours") {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var minute = d.getHours();
-            d.setHours(d.getHours() - parseInt(compare));
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    retrun[d.getTime(), null];
-                } else {
-                    retrun[time2, null];
-                }
-            }
-        }
-    } else if (typetime == "days") {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var day = d.getDate();
-            d.setDate(d.getDate() - parseInt(compare));
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    d.setDate(d.getDate() - parseInt(compare));
-                    retrun[d.getTime(), null];
-                } else {
-                    d.setDate(d.getDate() - parseInt(compare));
-                    retrun[time2, null];
-                }
-            }
-        }
-    } else if (typetime == "months") {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var month = d.getMonth();
-            d.setMonth(d.getMonth() - parseInt(compare));
-            console.log(d.getTime())
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    retrun[d.getTime(), null];
-                } else {
-                    retrun[time2, null];
-                }
-            }
-        }
-    } else {
-        if (time2 !== undefined) {
-            var d = new Date();
-            var year = d.getFullYear();
-            d.setFullYear(d.getFullYear() - parseInt(compare));
-            if ((time1[0] - d.getTime()) / (time2[0] - time1[0]) > 2) {
-                if (index == 0) {
-                    retrun[d.getTime(), null];
-                } else {
-                    retrun[time2, null];
-                }
-            }
-        }
-    }
-}
-
 function updateChart(chartDIV, datajson, option) {
     var oldgraph = document.getElementById(chartDIV).innerHTML;
     const DEFAULTCOLOR = ['#d40000', '#1569ea', '#ffcc00']
@@ -119,9 +33,9 @@ function updateChart(chartDIV, datajson, option) {
     var minY = [];
     var color;
     var unit =[];
-    if ($("#" + chartDIV).find("#" + chartDIV + "_graph").length > 0) {
-        $("#" + chartDIV).empty();
-    }
+    // if ($("#" + chartDIV).find("#" + chartDIV + "_graph").length > 0) {
+    $("#" + chartDIV).empty();
+    // }
     try {
         if (option === undefined) {
             optionGraph = defaultGraph;
