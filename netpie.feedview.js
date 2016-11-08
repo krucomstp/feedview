@@ -592,7 +592,7 @@ function updateChart(chartDIV, datajson, option) {
             $('#' + chartDIV + '_legend').css({
                 top: top + "%"
             })
-            console.log(111)
+            // console.log(111)
         }
         
     } catch (err) {
