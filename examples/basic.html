@@ -3,29 +3,29 @@
 <script src="../netpie.feedview.js">
 </script>
 <script>
+  //     setInterval(function insertGraph1() {
+		//   	$.getJSON( "https://api.netpie.io/feed/testfeed?apikey=gBZqaJuEAJkLUXmu6GprbCYEnlOFHDft&granularity=1minutes&aggregate=avg&since=12hours", function(datajson) {
+		// 		var option = {
+		//    			title : "Twitter Bot",
+		// 			// xaxis : "time",
+		// 			// yaxis : "value",
+		//             multipleaxis : false,
+		//             yzero: false,
+		//             // color: ,
+		//             type : "line", //line,step
+		//             marker : false, //true,false
+		//             filter : ""
+		//         }
+		// 		updateChart('chart2',datajson,option);
+		// 	});
+		// 	return insertGraph1;
+		// }(), 15000);
       setInterval(function insertGraph1() {
-		  	$.getJSON( "https://api.netpie.io/feed/testfeed?apikey=gBZqaJuEAJkLUXmu6GprbCYEnlOFHDft&granularity=1minutes&aggregate=avg&since=12hours", function(datajson) {
+		  	$.getJSON( "https://api.netpie.io/feed/pmt003?apikey=HpZ0YZfNpkM7h4718Ewy8ODgthkEMIj9&granularity=10minutes&aggregate=avg&since=5days", function(datajson) {
 				var option = {
-		   			title : "Twitter Bot",
+		            // title : "Piesensor Graph",
 					// xaxis : "time",
 					// yaxis : "value",
-		            multipleaxis : false,
-		            yzero: false,
-		            // color: ,
-		            type : "line", //line,step
-		            marker : false, //true,false
-		            filter : ""
-		        }
-				updateChart('chart2',datajson,option);
-			});
-			return insertGraph1;
-		}(), 15000);
-      setInterval(function insertGraph1() {
-		  	$.getJSON( "https://api.netpie.io/feed/pmt003?apikey=HpZ0YZfNpkM7h4718Ewy8ODgthkEMIj9&granularity=10minutes&aggregate=avg&since=1days", function(datajson) {
-				var option = {
-		            title : "Piesensor Graph",
-					xaxis : "time",
-					yaxis : "value",
 		            multipleaxis : false,
 		            yzero: false,
 		            color: "pink,blue,yellow,black,red",
@@ -36,7 +36,7 @@
 				updateChart('chart1',datajson,option);
 			});
 			return insertGraph1;
-		}(), 15000);
+		}(), 150000);
 		// setInterval(function insertGraph1() {
 		//   	$.getJSON( "https://api.netpie.io/feed/piesensor?apikey=GFLAKvCH2RCSKlmx&granularity=1hours&data=humid,temp,light&aggregate=avg&since=7days", function(datajson) {
 		// 		var option = {
@@ -55,9 +55,9 @@
 		// 	return insertGraph1;
 		// }(), 15000);
 </script>
-<div style="width:600px;height:400px;margin:auto">
+<div style="width:100vw;height:120px;margin:auto">
     <div id="chart1">
     </div>
 </div>
-<div id="chart2">
+<!-- <div id="chart2"> -->
 </div>
