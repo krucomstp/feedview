@@ -3,7 +3,7 @@ function insertChart(api, div, option) {
     for (var i = 0; i <= api.data.length - 1; i++) {
         data[data.length] = api.data[i];
     }
-    $.getJSON("https://api2.netpie.io/feed/" + api.name + "?apikey=" + api.key + "&granularity=" + api.granularity + "&timezone=7&data=" + data + "&aggregate=" + api.aggregate + "&since=" + api.since, function(datajson) {
+    $.getJSON("https://api.netpie.io/feed/" + api.name + "?apikey=" + api.key + "&granularity=" + api.granularity + "&timezone=7&data=" + data + "&aggregate=" + api.aggregate + "&since=" + api.since, function(datajson) {
         updateChart(div, datajson, option);
     });
 }
@@ -114,9 +114,14 @@ function updateChart(chartDIV, datajson, option) {
             position: "relative",
             'background-color': "#F3F3F3",
         });
+        var height_graph = 7.143-$("#" + chartDIV).height()/56
+        if($("#" + chartDIV).height()>400){
+            height_graph = 0
+        }
         $('<div id="' + chartDIV + '_graph" ></div>').css({
             width: "95%",
-            height: heightGraph + "%",
+            // height: heightGraph + "%",
+            height: (heightGraph- height_graph) + "%",
             margin: "auto",
         }).appendTo("#" + chartDIV);
         var filter = [];
@@ -453,10 +458,11 @@ function updateChart(chartDIV, datajson, option) {
             height: "5%",
             width: "100%",
             margin: "auto",
+            // top:"84%",
             textAlign: "center",
             position: "absolute",
             textAlign: "center",
-            'background-color': "#F3F3F3",
+            // 'background-color': "#F3F3F3",
         }).appendTo("#" + chartDIV);
         var plot = $.plot("#" + chartDIV + "_graph", chartdata, {
             legend: {
@@ -505,7 +511,8 @@ function updateChart(chartDIV, datajson, option) {
             fontFamily: "sans-serif",
             fontSize: 11,
             fontWeight: "bold",
-            color: "black"
+            color: "black",
+            "z-index": "1000"
         }).appendTo("body");
         $('#' + chartDIV + '_graph').bind("plothover", function(event, pos, item) {
             if ($("#enablePosition:checked").length > 0) {
@@ -576,11 +583,20 @@ function updateChart(chartDIV, datajson, option) {
                         left: ((-1) * (10.5 + (1200 / $("#" + chartDIV).width()))) + "px"
                     })
                 }
+
+                
             }
         }
+        if ($("#" + chartDIV).height() <= 400) {
+            var top =(84+ ($("#" + chartDIV+ '_legend').position().top/47)-2.5)
+            $('#' + chartDIV + '_legend').css({
+                top: top + "%"
+            })
+            console.log(111)
+        }
+        
     } catch (err) {
         document.getElementById(chartDIV).innerHTML = oldgraph;
-        console.log(111)
     }
     $(window).resize(function() {
         updateChart(chartDIV, datajson, option);
