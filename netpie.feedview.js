@@ -12,6 +12,38 @@ function n(n) {
     return n > 9 ? "" + n : "0" + n;
 }
 
+function getdata(datajson,arr,arrnext,index){
+    var timelist ={seconds:1000,minutes:1000*60,hours:1000*60*60,days:1000*60*60*24,months:1000*60*60*24*30,years:1000*60*60*24*30*12}
+    if(arrnext!==undefined){
+        var timesplit = timelist[datajson.granularity[1]]*datajson.granularity[0]*1.5;
+        if(index==0){
+            var timebegin = timelist[datajson.since[1]]*datajson.since[0];
+            var datenow = new Date().getTime();
+            if(arr[0]-(datenow-timebegin)>timesplit){
+                return [[ datenow-timebegin, null ]];
+            }
+        }
+        else{
+            if(arrnext[0]-arr[0]>timesplit){
+                return [[ arr[0], arr[1] ],[ arrnext[0], null]];
+            }
+            return [[ arr[0], arr[1] ]];
+        }
+    }
+    else{
+        var timesplit = timelist[datajson.granularity[1]]*datajson.granularity[0]*1.5;
+        var datenow = new Date().getTime();
+        if(datenow-arr[0]>timesplit){
+            return [[ arr[0], arr[1] ],[datenow, null]];
+        }
+        else{
+            return [[ arr[0], arr[1] ]]
+        }
+        return null;
+    }
+
+}
+
 function updateChart(chartDIV, datajson, option) {
     var oldgraph = document.getElementById(chartDIV).innerHTML;
     const DEFAULTCOLOR = ['#d40000', '#1569ea', '#ffcc00']
@@ -141,260 +173,101 @@ function updateChart(chartDIV, datajson, option) {
                     var maxi;
                     var mini;
                     var test = 0;
-                    if (filter.length > 0) {
-                        if (filter.indexOf(datajson.data[i].attr) != -1) {
-                            var s = {
-                                data: [],
-                                label: filter[filter.indexOf(datajson.data[i].attr)],
-                                points: {
-                                    symbol: "circle"
-                                }
+                    if (filter.length > 0 ){
+                        if(filter.indexOf(datajson.data[i].attr) != -1){
+                            var s = {data: [], label: filter[filter.indexOf(datajson.data[i].attr)], points:{symbol:"circle"}}
+                            if (count>0){
+                                s.yaxis = count+1;
                             }
-                            if (count > 0) {
-                                s.yaxis = count + 1;
-                            } else {
+                            else {
                                 s.yaxis = 1;
                             }
                             var arr = datajson.data[i].values;
-                            for (var j = 0; j < arr.length; j++) {
-                                if (j < 0) {
-                                    if (datajson.since[1] == "seconds") {
-                                        if (arr[j + 1] !== undefined) {
-                                            var d = new Date();
-                                            var second = d.getSeconds();
-                                            d.setSeconds(d.getSeconds() - parseInt(datajson.since[0]));
-                                            if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                                if (j == 0) {
-                                                    s.data.push([d.getTime(), null]);
-                                                } else {
-                                                    s.data.push([arr[j + 1][0], null]);
-                                                }
-                                            }
-                                        }
-                                    } else if (datajson.since[1] == "minutes") {
-                                        if (arr[j + 1] !== undefined) {
-                                            var d = new Date();
-                                            var minute = d.getMinutes();
-                                            d.setMinutes(d.getMinutes() - parseInt(datajson.since[0]));
-                                            if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                                if (j == 0) {
-                                                    s.data.push([d.getTime(), null]);
-                                                } else {
-                                                    s.data.push([arr[j + 1][0], null]);
-                                                }
-                                            }
-                                        }
-                                    } else if (datajson.since[1] == "hours") {
-                                        if (arr[j + 1] !== undefined) {
-                                            var d = new Date();
-                                            var minute = d.getHours();
-                                            d.setHours(d.getHours() - parseInt(datajson.since[0]));
-                                            if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                                if (j == 0) {
-                                                    s.data.push([d.getTime(), null]);
-                                                } else {
-                                                    s.data.push([arr[j + 1][0], null]);
-                                                }
-                                            }
-                                        }
-                                    } else if (datajson.since[1] == "days") {
-                                        if (arr[j + 1] !== undefined) {
-                                            var d = new Date();
-                                            var day = d.getDate();
-                                            d.setDate(d.getDate() - parseInt(datajson.since[0]));
-                                            if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                                if (j == 0) {
-                                                    s.data.push([d.getTime(), null]);
-                                                } else {
-                                                    s.data.push([arr[j + 1][0], null]);
-                                                }
-                                            }
-                                        }
-                                    } else if (datajson.since[1] == "months") {
-                                        if (arr[j + 1] !== undefined) {
-                                            var d = new Date();
-                                            var month = d.getMonth();
-                                            d.setMonth(d.getMonth() - parseInt(datajson.since[0]));
-                                            if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                                if (j == 0) {
-                                                    s.data.push([d.getTime(), null]);
-                                                } else {
-                                                    s.data.push([arr[j + 1][0], null]);
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        if (arr[j + 1] !== undefined) {
-                                            var d = new Date();
-                                            var year = d.getFullYear();
-                                            d.setFullYear(d.getFullYear() - parseInt(datajson.since[0]));
-                                            if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                                if (j == 0) {
-                                                    s.data.push([d.getTime(), null]);
-                                                } else {
-                                                    s.data.push([arr[j + 1][0], null]);
-                                                }
-                                            }
-                                        }
-                                    }
+                            for (var j=0; j<arr.length; j++) {
+                                var datai = null;
+                                if (option && option.autogap){
+                                    datai = getdata(datajson,arr[j],arr[j+1],j)
                                 }
-                                if (j >= 2 && (arr[j][0] - arr[j - 1][0]) / (arr[j - 1][0] - arr[j - 2][0]) > 2) {
-                                    if (arr[j + 1] !== undefined) {
-                                        if ((arr[j][0] - arr[j - 1][0]) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                            s.data.push([arr[j][0], null]);
-                                        }
-                                    }
+                                else{
+                                    datai = [[ arr[j][0], arr[j][1] ]];
                                 }
-                                s.data.push([arr[j][0], arr[j][1]]);
-                                if (j == 0) {
+                                if(datai!=null){
+                                    console.log(datai.length)
+                                    for (var k=0; k<datai.length; k++) {
+                                        s.data.push(datai[k]);
+                                    }
+                                }s
+                                if(j==0){
                                     maxi = arr[j][1];
                                     mini = arr[j][1];
                                     maxY[count] = arr[j][1];
                                     minY[count] = arr[j][1];
-                                } else {
-                                    if (arr[j][1] > maxi) {
+                                }
+                                else{
+                                    if(arr[j][1]>maxi){
                                         maxi = arr[j][1];
                                         maxY[count] = arr[j][1];
                                     }
-                                    if (arr[j][1] < mini) {
+                                    if(arr[j][1]<mini){
                                         mini = arr[j][1];
                                         minY[count] = arr[j][1];
                                     }
                                 }
                             }
                             chartdata[count] = s;
-                            if (i > numcolor) {
-                                colori[count] = color[i % numcolor];
+                            if(i > numcolor){
+                                colori[count] = color[i%numcolor];
                             }
-                            count = count + 1;
+                            count = count + 1 ;
                         }
-                    } else {
-                        var s = {
-                            data: [],
-                            label: datajson.data[i].attr,
-                            points: {
-                                symbol: "circle"
-                            }
+                    }
+                    else{
+                        var s = {data: [], label: datajson.data[i].attr, points:{symbol:"circle"}}
+                        if (i>0){
+                            s.yaxis = i+1;
                         }
-                        if (i > 0) {
-                            s.yaxis = i + 1;
-                        } else {
+                        else {
                             s.yaxis = 1;
                         }
                         var arr = datajson.data[i].values;
-                        for (var j = 0; j < arr.length; j++) {
-                            if (j < 2) {
-                                if (datajson.since[1] == "seconds") {
-                                    if (arr[j + 1] !== undefined) {
-                                        var d = new Date();
-                                        var second = d.getSeconds();
-                                        d.setSeconds(d.getSeconds() - parseInt(datajson.since[0]));
-                                        if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                            if (j == 0) {
-                                                s.data.push([d.getTime(), null]);
-                                            } else {
-                                                s.data.push([arr[j + 1][0], null]);
-                                            }
-                                        }
-                                    }
-                                } else if (datajson.since[1] == "minutes") {
-                                    if (arr[j + 1] !== undefined) {
-                                        var d = new Date();
-                                        var minute = d.getMinutes();
-                                        d.setMinutes(d.getMinutes() - parseInt(datajson.since[0]));
-                                        if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                            if (j == 0) {
-                                                s.data.push([d.getTime(), null]);
-                                            } else {
-                                                s.data.push([arr[j + 1][0], null]);
-                                            }
-                                        }
-                                    }
-                                } else if (datajson.since[1] == "hours") {
-                                    if (arr[j + 1] !== undefined) {
-                                        var d = new Date();
-                                        var minute = d.getHours();
-                                        d.setHours(d.getHours() - parseInt(datajson.since[0]));
-                                        if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                            if (j == 0) {
-                                                s.data.push([d.getTime(), null]);
-                                            } else {
-                                                s.data.push([arr[j + 1][0], null]);
-                                            }
-                                        }
-                                    }
-                                } else if (datajson.since[1] == "days") {
-                                    if (arr[j + 1] !== undefined) {
-                                        var d = new Date();
-                                        var day = d.getDate();
-                                        d.setDate(d.getDate() - parseInt(datajson.since[0]));
-                                        if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                            if (j == 0) {
-                                                s.data.push([d.getTime(), null]);
-                                            } else {
-                                                s.data.push([arr[j + 1][0], null]);
-                                            }
-                                        }
-                                    }
-                                } else if (datajson.since[1] == "months") {
-                                    if (arr[j + 1] !== undefined) {
-                                        var d = new Date();
-                                        var month = d.getMonth();
-                                        d.setMonth(d.getMonth() - parseInt(datajson.since[0]));
-                                        if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                            if (j == 0) {
-                                                s.data.push([d.getTime(), null]);
-                                            } else {
-                                                s.data.push([arr[j + 1][0], null]);
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    if (arr[j + 1] !== undefined) {
-                                        var d = new Date();
-                                        var year = d.getFullYear();
-                                        d.setFullYear(d.getFullYear() - parseInt(datajson.since[0]));
-                                        if ((arr[j][0] - d.getTime()) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                            if (j == 0) {
-                                                s.data.push([d.getTime(), null]);
-                                            } else {
-                                                s.data.push([arr[j + 1][0], null]);
-                                            }
-                                        }
-                                    }
+                        for (var j=0; j<arr.length; j++) {
+                            var datai = null;
+                            if (option && option.autogap){
+                                datai = getdata(datajson,arr[j],arr[j+1],j)
+                            }
+                            else{
+                                datai = [[ arr[j][0], arr[j][1] ]];
+                            }
+                            if(datai!=null){
+                                for (var k=0; k<datai.length; k++) {
+                                    s.data.push(datai[k]);
                                 }
                             }
-                            if (j >= 2 && (arr[j][0] - arr[j - 1][0]) / (arr[j - 1][0] - arr[j - 2][0]) > 2) {
-                                if (arr[j + 1] !== undefined) {
-                                    if ((arr[j][0] - arr[j - 1][0]) / (arr[j + 1][0] - arr[j][0]) > 2) {
-                                        s.data.push([arr[j][0], null]);
-                                    }
-                                }
-                            }
-                            s.data.push([arr[j][0], arr[j][1]]);
-                            if (j == 0) {
+                            if(j==0){
                                 maxi = arr[j][1];
                                 mini = arr[j][1];
                                 maxY[count] = arr[j][1];
                                 minY[count] = arr[j][1];
-                            } else {
-                                if (parseInt(arr[j][1]) > maxi) {
+                            }
+                            else{
+                                if(parseInt(arr[j][1])>maxi){
                                     maxi = arr[j][1];
                                     maxY[count] = arr[j][1];
                                 }
-                                if (parseInt(arr[j][1]) < mini) {
+                                if(parseInt(arr[j][1])<mini){
                                     mini = arr[j][1];
                                     minY[count] = arr[j][1];
                                 }
                             }
                         }
                         chartdata.push(s);
-                        if (i >= color.length) {
-                            colori[colori.length] = color[i % numcolor];
-                        }
-                        count = count + 1;
+                        if(i>=color.length){
+                            colori[colori.length] = color[i%numcolor];
+                    }
+                    count = count + 1 ;
                     }
                 }
+                
             } else {
                 chartdata = [
                     []
