@@ -1,0 +1,24 @@
+<html>
+ <head>
+    <title>iframe child</title>
+     <script type="text/javascript">
+         function getVal() {
+             var sel = document.getElementById("Select1");
+             var index = sel.selectedIndex;
+             var value = sel[index].value;
+             return value;
+         }
+     </script>
+ </head>
+ <body>
+ <form id="frm" >
+     <h1>this is iframe child</h1>
+     <select id="Select1" name="Select1">
+         <option value="1">one</option>
+         <option value="2">two</option>
+         <option value="3">three</option>
+     </select>
+     <input type="button" onclick="parent.setValue(getVal());" value="Go To Parent" />
+ </form>
+ </body>
+</html>
