@@ -47,16 +47,7 @@ function getdata(datajson,arr,arrnext,index){
 function updateChart(chartDIV, datajson, option) {
     var oldgraph = document.getElementById(chartDIV).innerHTML;
     const DEFAULTCOLOR = ['#d40000', '#1569ea', '#ffcc00']
-    var defaultGraph = {
-        lines: {
-            show: true,
-            steps: false
-        },
-        points: {
-            show: true,
-            radius: 2
-        }
-    };
+    var defaultGraph = {lines: {show: true,steps: false},points: {show: true,radius: 2}};
     var optionGraph = {};
     var heightGraph = 95;
     var topLegend = 95;
@@ -65,16 +56,22 @@ function updateChart(chartDIV, datajson, option) {
     var minY = [];
     var color;
     var unit =[];
-    // if ($("#" + chartDIV).find("#" + chartDIV + "_graph").length > 0) {
     $("#" + chartDIV).empty();
     // }
+    $('#' + chartDIV).css({
+        width: "100%",
+        height: "100%",
+        position: "relative",
+        // 'background-color': "#F1F1F1",
+    });
+    $('#'+chartDIV).addClass('bg-graph');
     try {
         if (option === undefined) {
             optionGraph = defaultGraph;
         } else {
             if (option.title) {
                 heightGraph = heightGraph - 10;
-                $('<div id="' + chartDIV + '_header">' + option.title + '</div>').css({
+                $('<div id="' + chartDIV + '_header">' + option.title.toUpperCase() + '</div>').css({
                     "padding-top": "2%",
                     display: "-webkit-flexbox",
                     display: "-ms-flexbox",
@@ -88,9 +85,9 @@ function updateChart(chartDIV, datajson, option) {
                     width: "100%",
                     height: "7%",
                     margin: "auto",
-                    font: '16px/1em "proxima-nova", Helvetica, Arial, sans-serif',
+                    font: '16px/1em Trebuchet, Arial, sans-serif',
                     color: "black",
-                    "font-weight": "bold"
+                    "font-weight": "normal"
                 }).appendTo("#" + chartDIV);
             }
             if (option.xaxis !== undefined && option.xaxis.trim() != "") {
@@ -128,7 +125,8 @@ function updateChart(chartDIV, datajson, option) {
             }
             optionGraph['points'] = {
                 show: option.marker ? true : false,
-                radius: 2
+                radius: 2,
+                fillColor:$('#' + chartDIV).css( "background-color" )
             };
             if (option.color !== undefined) {
                 if (option.color.replace(/ /g, '').split(',').length != 0 && option.color.replace(/ /g, '').split(',')[0].trim() != "") {
@@ -140,12 +138,13 @@ function updateChart(chartDIV, datajson, option) {
                 color = DEFAULTCOLOR
             }
         }
-        $('#' + chartDIV).css({
-            width: "100%",
-            height: "100%",
-            position: "relative",
-            'background-color': "#F3F3F3",
-        });
+        // $('#' + chartDIV).css({
+        //     width: "100%",
+        //     height: "100%",
+        //     position: "relative",
+        //     'background-color': "inherit",
+        // });
+        // $('#'+chartDIV).addClass('bg-graph');
         var height_graph = 7.143-$("#" + chartDIV).height()/56
         if($("#" + chartDIV).height()>400){
             height_graph = 0
@@ -192,7 +191,6 @@ function updateChart(chartDIV, datajson, option) {
                                     datai = [[ arr[j][0], arr[j][1] ]];
                                 }
                                 if(datai!=null){
-                                    console.log(datai.length)
                                     for (var k=0; k<datai.length; k++) {
                                         s.data.push(datai[k]);
                                     }
@@ -267,7 +265,6 @@ function updateChart(chartDIV, datajson, option) {
                     count = count + 1 ;
                     }
                 }
-                
             } else {
                 chartdata = [
                     []
@@ -288,8 +285,8 @@ function updateChart(chartDIV, datajson, option) {
                         font: {
                             size: 11,
                             style: "",
-                            weight: "bold",
-                            family: "sans-serif",
+                            weight: "normal",
+                            family: "Trebuchet, Arial, sans-serif",
                             variant: "small-caps",
                             color: "black"
                         },
@@ -308,8 +305,8 @@ function updateChart(chartDIV, datajson, option) {
                     font: {
                         size: 11,
                         style: "",
-                        weight: "bold",
-                        family: "sans-serif",
+                        weight: "normal",
+                        family: "Trebuchet, Arial, sans-serif",
                         variant: "small-caps",
                         color: colori[i]
                     }
@@ -335,7 +332,10 @@ function updateChart(chartDIV, datajson, option) {
             textAlign: "center",
             position: "absolute",
             textAlign: "center",
-            // 'background-color': "#F3F3F3",
+            font: '0.8em Trebuchet, Arial, sans-serif',
+            //color: "black",
+            "font-weight": "normal",
+            // 'background-color': "#F1F1F1",
         }).appendTo("#" + chartDIV);
         var plot = $.plot("#" + chartDIV + "_graph", chartdata, {
             legend: {
@@ -351,13 +351,13 @@ function updateChart(chartDIV, datajson, option) {
                             }
                         }
                     }
-                    return '&nbsp;' + label +uniti;
+                    return '&nbsp;' + label.toUpperCase() +uniti.toUpperCase();
                 }
             },
             series: optionGraph,
             grid: {
                 hoverable: true,
-                clickable: true
+                clickable: false
             },
             yaxes: yaxes,
             color: colori,
@@ -367,8 +367,8 @@ function updateChart(chartDIV, datajson, option) {
                 font: {
                     size: 11,
                     style: "",
-                    weight: "bold",
-                    family: "sans-serif",
+                    weight: "normal",
+                    family: "Trebuchet, Arial, sans-serif",
                     variant: "small-caps",
                     color: "black"
                 }
@@ -399,17 +399,26 @@ function updateChart(chartDIV, datajson, option) {
                     var newDate = new Date(parseInt(x));
                     var listDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                     var listMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                    uniti = "";
+                    var uniti = "";
+                    var lastindex = item.series.data.length-1;
                     for (var i = unit.length - 1; i >= 0; i--) {
                         if(unit[i][0]==item.series.label){
-                            uniti =unit[i][1]
+                            uniti = unit[i][1];
                         }
                     }
                     var tooltiptext = listDays[newDate.getDay()] + " " + listMonths[newDate.getMonth()] + " " + n(newDate.getDate()) + " " + newDate.getFullYear() + " " + n(newDate.getHours()) + ":" + n(newDate.getMinutes()) + ":" + n(newDate.getSeconds()) + "<br>" + item.series.label + " = " + y+" "+uniti;
-                    $("#tooltip").html(tooltiptext).css({
-                        top: item.pageY + 5,
+                    if(item.dataIndex+2>lastindex){
+                        $("#tooltip").html(tooltiptext).css({
+                        top: item.pageY + 15,
+                        left: item.pageX - 70
+                        }).fadeIn(200);
+                    }
+                    else{
+                        $("#tooltip").html(tooltiptext).css({
+                        top: item.pageY + 15,
                         left: item.pageX + 5
-                    }).fadeIn(200);
+                        }).fadeIn(200);
+                    }
                 } else {
                     $("#tooltip").hide();
                 }
@@ -424,30 +433,30 @@ function updateChart(chartDIV, datajson, option) {
         if (option !== undefined) {
             if (option.xaxis !== undefined && option.xaxis.trim() != "") {
                 var topX = topLegend + 5;
-                $('<div id="' + chartDIV + '_x">' + option.xaxis + '</div>').css({
+                $('<div id="' + chartDIV + '_x">' + option.xaxis.toUpperCase() + '</div>').css({
                     width: "100%",
                     margin: "auto",
                     textAlign: "center",
                     position: "absolute",
                     height: "5%",
                     top: topX + "%",
-                    font: '1em "proxima-nova", Helvetica, Arial, sans-serif',
+                    font: '0.8em Trebuchet, Arial, sans-serif',
                     color: "black",
-                    "font-weight": "bold",
-                    'background-color': "#F3F3F3",
+                    "font-weight": "normal",
+                    // 'background-color': "#F1F1F1",
                 }).insertAfter("#" + chartDIV + "_legend");
             }
             if (option.yaxis !== undefined) {
-                $('<div id="' + chartDIV + '_y">' + option.yaxis + '</div>').css({
+                $('<div id="' + chartDIV + '_y">' + option.yaxis.toUpperCase() + '</div>').css({
                     textAlign: "center",
                     '-webkit-transform': 'rotate(270deg)',
                     '-moz-transform': 'rotate(270deg)',
                     '-ms-transform': 'rotate(270deg)',
                     'transform': 'rotate(270deg)',
                     position: "absolute",
-                    font: '1em "proxima-nova", Helvetica, Arial, sans-serif',
+                    font: '0.8em Trebuchet, Arial, sans-serif',
                     color: "black",
-                    "font-weight": "bold",
+                    "font-weight": "normal",
                     top: ($("#" + chartDIV).height() / 2) + "px",
                     left: '-7.5px'
                 }).insertBefore("#" + chartDIV + "_graph");
@@ -2876,7 +2885,7 @@ Licensed under the MIT license.
                     fragments.push('<tr>');
                     rowStarted = true;
                 }
-                fragments.push('<td class="legendColorBox"><div style="border:1px solid ' + options.legend.labelBoxBorderColor + ';"><div style="width:4px;height:4;border:5px solid ' + entry.color + ';overflow:hidden"></div></div></td>' + '<td class="legendLabel" style="font-variant: small-caps; font-weight: bold; font-size: 14px; font-family: sans-serif; color: black;">' + entry.label + '</td>');
+                fragments.push('<td class="legendColorBox"><div style="border:1px solid ' + options.legend.labelBoxBorderColor + ';"><div style="width:4px;height:4;border:5px solid ' + entry.color + ';overflow:hidden"></div></div></td>' + '<td class="legendLabel" style="font-variant: small-caps; font-weight: normal; font-size: 0.8em; font-family: Trebuchet, Arial, sans-serif; color: black;">' + entry.label + '</td>');
             }
             if (rowStarted) fragments.push('</tr>');
             if (fragments.length == 0) return;
@@ -3195,11 +3204,11 @@ Licensed under the MIT license.
 
 The symbols are accessed as strings through the standard symbol options:
 
-	series: {
-		points: {
-			symbol: "square" // or "diamond", "triangle", "cross"
-		}
-	}
+    series: {
+        points: {
+            symbol: "square" // or "diamond", "triangle", "cross"
+        }
+    }
 
 */
 (function($) {
