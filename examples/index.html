@@ -1,8 +1,34 @@
-<!DOCTYPE html>
-<html>
-<body>
-<iframe id="frame" src="basic.html?feedname=&apikey=&granularity=15minutes&since=8hours&title=Piesensor Graph&xaxis=time&yaxis=value&multipleaxis=false&yzero=false&color=red,blue,black&type=line&marker=true&filter=&autogap=true" height="400" width="550" scrolling="no" frameborder="0">
-  <p>Your browser does not support iframes.</p>
-</iframe>
+<script src="../jquery.js"></script>
+<!-- <link href="../netpie.theme.css" rel="stylesheet" /> -->
+<script src="../netpie.feedview.js"></script>
+<script>
+    var feedname = <feedname>;
+    var apikey = <apikey>;
+    var granularity = <granularity>;//ex. 15seconds,15minutes,1hours,1days
+    var since = <since>;//ex. 1hours,1days,1months
+    var option = {
+        title : "title", //text
+        xaxis : "time", //text
+        yaxis : "value", //text
+        multipleaxis : false, //true,false
+        yzero: false, //true,false
+        color: "pink,blue,yellow",
+        type : "line", //line,step 
+        marker : false, //true,false
+        filter : "",
+        autogap :true
+    } 
+    setInterval(function insertGraph() {
+        $.getJSON( "https://api.netpie.io/feed/"+feedname+"?apikey="+apikey+"&granularity="+granularity+"&since="+since, function(datajson) {
+            updateChart('chart',datajson,option);
+        });
+        return insertGraph;
+    }(), 150000);
+</script>
+
+<body style="margin: 0px;overflow: hidden;background-color: inherit;" id="body">
+	<div style="width:100vw;height:100vh;" id="main">
+	    <div id="chart"></div>
+	</div>
+    
 </body>
-</html>
