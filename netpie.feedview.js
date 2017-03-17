@@ -17,11 +17,21 @@ function getdata(datajson,arr,arrnext,index){
     if(arrnext!==undefined){
         var timesplit = timelist[datajson.granularity[1]]*datajson.granularity[0]*1.5;
         if(index==0){
-            var timebegin = timelist[datajson.since[1]]*datajson.since[0];
-            var datenow = new Date().getTime();
-            if(arr[0]-(datenow-timebegin)>timesplit){
-                return [[ datenow-timebegin, null ]];
+            if(datajson.since == undefined){
+                var timebegin = datajson.from;
+                if(arr[0]-timebegin>timesplit){
+                    return [[ timebegin, null ]];
+                }
+                
             }
+            else{
+                var timebegin = timelist[datajson.since[1]]*datajson.since[0];
+                var datenow = new Date().getTime();
+                if(arr[0]-(datenow-timebegin)>timesplit){
+                    return [[ datenow-timebegin, null ]];
+                }
+            }
+            
         }
         else{
             if(arrnext[0]-arr[0]>timesplit){
@@ -34,13 +44,20 @@ function getdata(datajson,arr,arrnext,index){
         var timesplit = timelist[datajson.granularity[1]]*datajson.granularity[0]*1.5;
         var datenow = new Date().getTime();
         if(datenow-arr[0]>timesplit){
-            return [[ arr[0], arr[1] ],[datenow, null]];
+            if(datajson.since == undefined){
+                return [[ arr[0], arr[1] ],[datajson.to, null]];
+            }
+            else{
+                return [[ arr[0], arr[1] ],[datenow, null]];
+            }
+            
         }
         else{
             return [[ arr[0], arr[1] ]]
         }
         return null;
     }
+    
 
 }
 
@@ -232,6 +249,7 @@ function updateChart(chartDIV, datajson, option) {
                             var datai = null;
                             if (option && option.autogap){
                                 datai = getdata(datajson,arr[j],arr[j+1],j)
+                                
                             }
                             else{
                                 datai = [[ arr[j][0], arr[j][1] ]];
@@ -261,8 +279,8 @@ function updateChart(chartDIV, datajson, option) {
                         chartdata.push(s);
                         if(i>=color.length){
                             colori[colori.length] = color[i%numcolor];
-                    }
-                    count = count + 1 ;
+                        }
+                        count = count + 1 ;
                     }
                 }
             } else {
@@ -474,7 +492,6 @@ function updateChart(chartDIV, datajson, option) {
             $('#' + chartDIV + '_legend').css({
                 top: top + "%"
             })
-            // console.log(111)
         }
         
     } catch (err) {

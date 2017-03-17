@@ -1,29 +1,40 @@
 <script src="../jquery.js"></script>
-<!-- <link href="../netpie.theme.css" rel="stylesheet" /> -->
 <script src="../netpie.feedview.js"></script>
 <script>
-    var feedname = <feedname>;
-    var apikey = <apikey>;
-    var granularity = <granularity>;//ex. 15seconds,15minutes,1hours,1days
-    var since = <since>;//ex. 1hours,1days,1months
+    var feedname = "feedname";
+    var apikey = "apikey";
+    var granularity = "1hours"; //ex. 15seconds,15minutes,1hours,1days
+    var since = "1hours"; //ex. 1hours,1days,1months
+    var _from = "1489071865000"; //Timestamp in milliseconds
+    var _to = "1489331065000"; //Timestamp in milliseconds
     var option = {
         title : "title", //text
         xaxis : "time", //text
         yaxis : "value", //text
-        multipleaxis : false, //true,false
+        multipleaxis : true, //true,false
         yzero: false, //true,false
         color: "pink,blue,yellow",
         type : "line", //line,step 
-        marker : false, //true,false
-        filter : "",
-        autogap :true
-    } 
+        marker : true, //true,false
+        filter : "", //field name
+        autogap :true //true,false
+    }
+
+    //ex. since
     setInterval(function insertGraph() {
-        $.getJSON( "https://api.netpie.io/feed/"+feedname+"?apikey="+apikey+"&granularity="+granularity+"&since="+since, function(datajson) {
+        $.getJSON( "https://api.netpie.io/feed/"+feedname+"?apikey="+apikey+"&granularity="+granularity+"&since="+since, 
+        function(datajson) {
             updateChart('chart',datajson,option);
         });
         return insertGraph;
-    }(), 150000);
+    }(), 15000);
+    
+    //ex. from..to..
+    // $.getJSON( "https://api.netpie.io/feed/"+feedname+"?apikey="+apikey+"&granularity="+granularity+"&from="+_from+"&to="+_to, function(datajson) {
+    //     console.log(datajson)
+    //     updateChart('chart',datajson,option);
+    // });
+      
 </script>
 
 <body style="margin: 0px;overflow: hidden;background-color: inherit;" id="body">
