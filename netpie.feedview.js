@@ -57,8 +57,6 @@ function getdata(datajson,arr,arrnext,index){
         }
         return null;
     }
-    
-
 }
 
 function updateChart(chartDIV, datajson, option) {
@@ -146,6 +144,7 @@ function updateChart(chartDIV, datajson, option) {
                 fillColor:$('#' + chartDIV).css( "background-color" )
             };
             if (option.color !== undefined) {
+
                 if (option.color.replace(/ /g, '').split(',').length != 0 && option.color.replace(/ /g, '').split(',')[0].trim() != "") {
                     color = option.color.replace(/ /g, '').split(',');
                 } else {

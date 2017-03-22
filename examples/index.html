@@ -1,7 +1,7 @@
 <script src="../jquery.js"></script>
 <script src="../netpie.feedview.js"></script>
 <script>
-    var feedname = "feedname";
+    var feedid = "feedid";
     var apikey = "apikey";
     var granularity = "1hours"; //ex. 15seconds,15minutes,1hours,1days
     var since = "1hours"; //ex. 1hours,1days,1months
@@ -22,7 +22,7 @@
 
     //ex. since
     setInterval(function insertGraph() {
-        $.getJSON( "https://api.netpie.io/feed/"+feedname+"?apikey="+apikey+"&granularity="+granularity+"&since="+since, 
+        $.getJSON( "https://api.netpie.io/feed/"+feedid+"?apikey="+apikey+"&granularity="+granularity+"&since="+since, 
         function(datajson) {
             updateChart('chart',datajson,option);
         });
@@ -30,7 +30,7 @@
     }(), 15000);
     
     //ex. from..to..
-    // $.getJSON( "https://api.netpie.io/feed/"+feedname+"?apikey="+apikey+"&granularity="+granularity+"&from="+_from+"&to="+_to, function(datajson) {
+    // $.getJSON( "https://api.netpie.io/feed/"+feedid+"?apikey="+apikey+"&granularity="+granularity+"&from="+_from+"&to="+_to, function(datajson) {
     //     console.log(datajson)
     //     updateChart('chart',datajson,option);
     // });
