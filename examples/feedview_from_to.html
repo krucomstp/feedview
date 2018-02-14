@@ -1,0 +1,35 @@
+<script src="../jquery.js"></script>
+<script src="../netpie.feedview.js"></script>
+<script>
+    var feedid = "feedid";
+    var apikey = "apikey";
+    var granularity = "1hours"; //ex. 15seconds,15minutes,1hours,1days
+    var _from = "1489071865000"; //Timestamp in milliseconds
+    var _to = "1489331065000"; //Timestamp in milliseconds
+    var option = {
+        title : "title", //text
+        xaxis : "time", //text
+        yaxis : "value", //text
+        multipleaxis : true, //true,false
+        yzero: false, //true,false
+        color: "pink,blue,yellow",
+        type : "line", //line,step 
+        marker : true, //true,false
+        filter : "", //field name
+        autogap :true //true,false
+    }
+
+    // ex. from..to..
+    $.getJSON( "https://api.netpie.io/feed/"+feedid+"?apikey="+apikey+"&granularity="+granularity+"&from="+_from+"&to="+_to, function(datajson) {
+        console.log(datajson)
+        updateChart('chart',datajson,option);
+    });
+      
+</script>
+
+<body style="margin: 0px;overflow: hidden;background-color: inherit;" id="body">
+	<div style="width:100vw;height:100vh;" id="main">
+	    <div id="chart"></div>
+	</div>
+    
+</body>
