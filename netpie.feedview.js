@@ -12,48 +12,60 @@ function n(n) {
     return n > 9 ? "" + n : "0" + n;
 }
 
-function getdata(datajson,arr,arrnext,index){
-    var timelist ={seconds:1000,minutes:1000*60,hours:1000*60*60,days:1000*60*60*24,months:1000*60*60*24*30,years:1000*60*60*24*30*12}
-    if(arrnext!==undefined){
-        var timesplit = timelist[datajson.granularity[1]]*datajson.granularity[0]*1.5;
-        if(index==0){
-            if(datajson.since == undefined){
+function getdata(datajson, arr, arrnext, index) {
+    var timelist = { seconds: 1000, minutes: 1000 * 60, hours: 1000 * 60 * 60, days: 1000 * 60 * 60 * 24, months: 1000 * 60 * 60 * 24 * 30, years: 1000 * 60 * 60 * 24 * 30 * 12 }
+    if (arrnext !== undefined) {
+        var timesplit = timelist[datajson.granularity[1]] * datajson.granularity[0] * 1.5;
+        if (index == 0) {
+            if (datajson.since == undefined) {
                 var timebegin = datajson.from;
-                if(arr[0]-timebegin>timesplit){
-                    return [[ timebegin, null ]];
+                if (arr[0] - timebegin > timesplit) {
+                    return [
+                        [timebegin, null]
+                    ];
                 }
-                
-            }
-            else{
-                var timebegin = timelist[datajson.since[1]]*datajson.since[0];
+
+            } else {
+                var timebegin = timelist[datajson.since[1]] * datajson.since[0];
                 var datenow = new Date().getTime();
-                if(arr[0]-(datenow-timebegin)>timesplit){
-                    return [[ datenow-timebegin, null ]];
+                if (arr[0] - (datenow - timebegin) > timesplit) {
+                    return [
+                        [datenow - timebegin, null]
+                    ];
                 }
             }
-            
-        }
-        else{
-            if(arrnext[0]-arr[0]>timesplit){
-                return [[ arr[0], arr[1] ],[ arrnext[0], null]];
+
+        } else {
+            if (arrnext[0] - arr[0] > timesplit) {
+                return [
+                    [arr[0], arr[1]],
+                    [arrnext[0], null]
+                ];
             }
-            return [[ arr[0], arr[1] ]];
+            return [
+                [arr[0], arr[1]]
+            ];
         }
-    }
-    else{
-        var timesplit = timelist[datajson.granularity[1]]*datajson.granularity[0]*1.5;
+    } else {
+        var timesplit = timelist[datajson.granularity[1]] * datajson.granularity[0] * 1.5;
         var datenow = new Date().getTime();
-        if(datenow-arr[0]>timesplit){
-            if(datajson.since == undefined){
-                return [[ arr[0], arr[1] ],[datajson.to, null]];
+        if (datenow - arr[0] > timesplit) {
+            if (datajson.since == undefined) {
+                return [
+                    [arr[0], arr[1]],
+                    [datajson.to, null]
+                ];
+            } else {
+                return [
+                    [arr[0], arr[1]],
+                    [datenow, null]
+                ];
             }
-            else{
-                return [[ arr[0], arr[1] ],[datenow, null]];
-            }
-            
-        }
-        else{
-            return [[ arr[0], arr[1] ]]
+
+        } else {
+            return [
+                [arr[0], arr[1]]
+            ]
         }
         return null;
     }
@@ -62,15 +74,18 @@ function getdata(datajson,arr,arrnext,index){
 function updateChart(chartDIV, datajson, option) {
     var oldgraph = document.getElementById(chartDIV).innerHTML;
     const DEFAULTCOLOR = ['#d40000', '#1569ea', '#ffcc00']
-    var defaultGraph = {lines: {show: true,steps: false},points: {show: true,radius: 2}};
+    var defaultGraph = { lines: { show: true, steps: false }, points: { show: true, radius: 2 } };
     var optionGraph = {};
     var heightGraph = 95;
     var topLegend = 95;
     var yaxes = []
     var maxY = [];
     var minY = [];
-    var color;
-    var unit =[];
+    var feedlinecolor;
+    var baselinecolor;
+    var unit = [];
+    var baseline = [];
+        var dash = false;
     $("#" + chartDIV).empty();
     // }
     $('#' + chartDIV).css({
@@ -79,7 +94,7 @@ function updateChart(chartDIV, datajson, option) {
         position: "relative",
         // 'background-color': "#F1F1F1",
     });
-    $('#'+chartDIV).addClass('bg-graph');
+    $('#' + chartDIV).addClass('bg-graph');
     try {
         if (option === undefined) {
             optionGraph = defaultGraph;
@@ -116,43 +131,42 @@ function updateChart(chartDIV, datajson, option) {
             if (option.type !== undefined) {
                 if (option.type == "bar") {
                     delete datajson[datajson.data[0].values[0]];
-                    optionGraph['bars'] = {
-                        show: true,
-                        barWidth: (datajson.data[0].values[1][0] - datajson.data[0].values[0][0]) / 2,
-                        align: "center"
-                    };
-                } else if (option.type == "step") {
-                    optionGraph['lines'] = {
-                        show: true,
-                        steps: true
-                    };
-                } else {
-                    optionGraph['lines'] = {
-                        show: true,
-                        steps: false
-                    };
                 }
-            } else {
-                optionGraph['lines'] = {
-                    show: true,
-                    steps: false
-                };
             }
             optionGraph['points'] = {
                 show: option.marker ? true : false,
                 radius: 2,
-                fillColor:$('#' + chartDIV).css( "background-color" )
+                fillColor: $('#' + chartDIV).css("background-color")
             };
-            if (option.color !== undefined) {
-
-                if (option.color.replace(/ /g, '').split(',').length != 0 && option.color.replace(/ /g, '').split(',')[0].trim() != "") {
-                    color = option.color.replace(/ /g, '').split(',');
+            if (option.feedlinecolor !== undefined) {
+                if (option.feedlinecolor.replace(/ /g, '').split(',').length != 0 && option.feedlinecolor.replace(/ /g, '').split(',')[0].trim() != "") {
+                    feedlinecolor = option.feedlinecolor.replace(/ /g, '').split(',');
                 } else {
-                    color = DEFAULTCOLOR
+                    feedlinecolor = DEFAULTCOLOR
                 }
             } else {
-                color = DEFAULTCOLOR
+                feedlinecolor = DEFAULTCOLOR
             }
+            if (option.baseline !== undefined) {
+                if (option.baseline.replace(/ /g, '').split(',').length != 0 && option.baseline.replace(/ /g, '').split(',')[0].trim() != "") {
+                    baseline = option.baseline.replace(/ /g, '').split(',');
+                }
+            }
+            if (option.baselinecolor !== undefined) {
+                if (option.baselinecolor.replace(/ /g, '').split(',').length != 0 && option.baselinecolor.replace(/ /g, '').split(',')[0].trim() != "") {
+                    baselinecolor = option.baselinecolor.replace(/ /g, '').split(',');
+                } else {
+                    baselinecolor = DEFAULTCOLOR
+                }
+            } else {
+                baselinecolor = DEFAULTCOLOR
+            }
+            if (option.typebaseline !== undefined) {
+                if (option.typebaseline == "dash") {
+                    dash = true;
+                }
+            }
+            
         }
         // $('#' + chartDIV).css({
         //     width: "100%",
@@ -161,14 +175,14 @@ function updateChart(chartDIV, datajson, option) {
         //     'background-color': "inherit",
         // });
         // $('#'+chartDIV).addClass('bg-graph');
-        var height_graph = 7.143-$("#" + chartDIV).height()/56
-        if($("#" + chartDIV).height()>400){
+        var height_graph = 7.143 - $("#" + chartDIV).height() / 56
+        if ($("#" + chartDIV).height() > 400) {
             height_graph = 0
         }
         $('<div id="' + chartDIV + '_graph" ></div>').css({
             width: "95%",
             // height: heightGraph + "%",
-            height: (heightGraph- height_graph) + "%",
+            height: (heightGraph - height_graph) + "%",
             margin: "auto",
         }).appendTo("#" + chartDIV);
         var filter = [];
@@ -177,109 +191,210 @@ function updateChart(chartDIV, datajson, option) {
                 filter = option.filter.replace(/ /g, '').split(',');
             }
         }
-        var colori = color;
+        var feedlinecolori = [];
         var chartdata = [];
         var count = 0;
         if (datajson) {
-            var numcolor = color.length;
+            var numcolor = feedlinecolor.length;
+            var fill = false;
+            if (option.fill !== undefined) {
+                fill = option.fill ? true : false
+            }
             if (datajson.data.length >= 1) {
                 for (var i = 0; i < datajson.data.length; i++) {
-                    unit[unit.length] = [datajson.data[i].attr,datajson.data[i].unit];
+                    unit[unit.length] = [datajson.data[i].attr, datajson.data[i].unit];
                     var maxi;
                     var mini;
                     var test = 0;
-                    if (filter.length > 0 ){
-                        if(filter.indexOf(datajson.data[i].attr) != -1){
-                            var s = {data: [], label: filter[filter.indexOf(datajson.data[i].attr)], points:{symbol:"circle"}}
-                            if (count>0){
-                                s.yaxis = count+1;
+                    var s = {};
+
+                    if (option.type !== undefined) {
+                        if (option.type == "bar") {
+                            if (fill) {
+                                s = {
+                                    data: [],
+                                    points: { symbol: "circle" },
+                                    bars: {
+                                        show: true,
+                                        barWidth: (datajson.data[0].values[1][0] - datajson.data[0].values[0][0]) / 2,
+                                        align: "center",
+                                        fill: true
+                                    }
+                                }
+                            } else {
+                                s = {
+                                    data: [],
+                                    points: { symbol: "circle" },
+                                    bars: {
+                                        show: true,
+                                        barWidth: (datajson.data[0].values[1][0] - datajson.data[0].values[0][0]) / 2,
+                                        align: "center"
+                                    }
+                                }
                             }
-                            else {
+
+
+                        } else if (option.type == "step") {
+                            if (fill) {
+                                s = {
+                                    data: [],
+                                    points: { symbol: "circle" },
+                                    lines: {
+                                        show: true,
+                                        steps: true,
+                                        fill: true
+                                    }
+                                }
+                            } else {
+                                s = {
+                                    data: [],
+                                    points: { symbol: "circle" },
+                                    lines: {
+                                        show: true,
+                                        steps: true
+                                    }
+                                }
+                            }
+
+                        } else {
+                            if (fill) {
+                                s = {
+                                    data: [],
+                                    points: { symbol: "circle" },
+                                    lines: {
+                                        show: true,
+                                        steps: false,
+                                        fill: true
+                                    }
+                                }
+                            } else {
+                                s = {
+                                    data: [],
+                                    points: { symbol: "circle" },
+                                    lines: {
+                                        show: true,
+                                        steps: false
+                                    }
+                                }
+                            }
+
+                        }
+                    } else {
+                        if (fill) {
+                            s = {
+                                data: [],
+                                points: { symbol: "circle" },
+                                lines: {
+                                    show: true,
+                                    steps: false,
+                                    fill: true
+                                }
+                            }
+                        } else {
+                            s = {
+                                data: [],
+                                points: { symbol: "circle" },
+                                lines: {
+                                    show: true,
+                                    steps: false
+                                }
+                            }
+                        }
+                    }
+                    if (filter.length > 0) {
+                        s.label = filter[filter.indexOf(datajson.data[i].attr)];
+                        if (filter.indexOf(datajson.data[i].attr) != -1) {
+                            if (count > 0) {
+                                s.yaxis = count + 1;
+                            } else {
                                 s.yaxis = 1;
                             }
                             var arr = datajson.data[i].values;
-                            for (var j=0; j<arr.length; j++) {
+                            for (var j = 0; j < arr.length; j++) {
                                 var datai = null;
-                                if (option && option.autogap){
-                                    datai = getdata(datajson,arr[j],arr[j+1],j)
+                                if (option && option.autogap) {
+                                    datai = getdata(datajson, arr[j], arr[j + 1], j)
+                                } else {
+                                    datai = [
+                                        [arr[j][0], arr[j][1]]
+                                    ];
                                 }
-                                else{
-                                    datai = [[ arr[j][0], arr[j][1] ]];
-                                }
-                                if(datai!=null){
-                                    for (var k=0; k<datai.length; k++) {
+                                if (datai != null) {
+                                    for (var k = 0; k < datai.length; k++) {
                                         s.data.push(datai[k]);
                                     }
-                                }s
-                                if(j==0){
+                                }
+
+                                if (j == 0) {
                                     maxi = arr[j][1];
                                     mini = arr[j][1];
                                     maxY[count] = arr[j][1];
                                     minY[count] = arr[j][1];
-                                }
-                                else{
-                                    if(arr[j][1]>maxi){
+                                } else {
+                                    if (arr[j][1] > maxi) {
                                         maxi = arr[j][1];
                                         maxY[count] = arr[j][1];
                                     }
-                                    if(arr[j][1]<mini){
+                                    if (arr[j][1] < mini) {
                                         mini = arr[j][1];
                                         minY[count] = arr[j][1];
                                     }
                                 }
                             }
                             chartdata[count] = s;
-                            if(i > numcolor){
-                                colori[count] = color[i%numcolor];
+                            if (count + 1 > numcolor) {
+                                feedlinecolori[count] = feedlinecolor[i % numcolor];
+                            } else {
+                                feedlinecolori[count] = feedlinecolor[filter.indexOf(datajson.data[i].attr)]
                             }
-                            count = count + 1 ;
+                            count = count + 1;
                         }
-                    }
-                    else{
-                        var s = {data: [], label: datajson.data[i].attr, points:{symbol:"circle"}}
-                        if (i>0){
-                            s.yaxis = i+1;
-                        }
-                        else {
+                    } else {
+                        s.label = datajson.data[i].attr;
+                        if (i > 0) {
+                            s.yaxis = i + 1;
+                        } else {
                             s.yaxis = 1;
                         }
                         var arr = datajson.data[i].values;
-                        for (var j=0; j<arr.length; j++) {
+                        for (var j = 0; j < arr.length; j++) {
                             var datai = null;
-                            if (option && option.autogap){
-                                datai = getdata(datajson,arr[j],arr[j+1],j)
-                                
+                            if (option && option.autogap) {
+                                datai = getdata(datajson, arr[j], arr[j + 1], j)
+
+                            } else {
+                                datai = [
+                                    [arr[j][0], arr[j][1]]
+                                ];
                             }
-                            else{
-                                datai = [[ arr[j][0], arr[j][1] ]];
-                            }
-                            if(datai!=null){
-                                for (var k=0; k<datai.length; k++) {
+                            if (datai != null) {
+                                for (var k = 0; k < datai.length; k++) {
                                     s.data.push(datai[k]);
                                 }
                             }
-                            if(j==0){
+                            if (j == 0) {
                                 maxi = arr[j][1];
                                 mini = arr[j][1];
                                 maxY[count] = arr[j][1];
                                 minY[count] = arr[j][1];
-                            }
-                            else{
-                                if(parseInt(arr[j][1])>maxi){
+                            } else {
+                                if (parseInt(arr[j][1]) > maxi) {
                                     maxi = arr[j][1];
                                     maxY[count] = arr[j][1];
                                 }
-                                if(parseInt(arr[j][1])<mini){
+                                if (parseInt(arr[j][1]) < mini) {
                                     mini = arr[j][1];
                                     minY[count] = arr[j][1];
                                 }
                             }
                         }
                         chartdata.push(s);
-                        if(i>=color.length){
-                            colori[colori.length] = color[i%numcolor];
+                        if (count >= feedlinecolor.length) {
+                            feedlinecolori[feedlinecolori.length] = feedlinecolor[i % numcolor];
+                        } else {
+                            feedlinecolori[count] = feedlinecolor[count]
                         }
-                        count = count + 1 ;
+                        count = count + 1;
                     }
                 }
             } else {
@@ -291,9 +406,9 @@ function updateChart(chartDIV, datajson, option) {
         }
         for (var i = 0; i < count; i++) {
             if (option !== undefined && option.multipleaxis !== undefined && option.multipleaxis != true) {
-                var minYi = (Math.min.apply(Math, minY)) - 1;
+                var minYi = (Math.min.apply(Math, minY.concat(baseline))) - 1;
                 if (option.yzero) {
-                    if ((Math.min.apply(Math, minY)) > 0) {
+                    if ((Math.min.apply(Math, minY.concat(baseline))) > 0) {
                         minYi = 0;
                     }
                 }
@@ -307,14 +422,14 @@ function updateChart(chartDIV, datajson, option) {
                             variant: "small-caps",
                             color: "black"
                         },
-                        max: Math.max.apply(Math, maxY) + 1,
+                        max: Math.max.apply(Math, maxY.concat(baseline)) + 1,
                         min: minYi
                     };
                 } else {
                     yaxes[yaxes.length] = {
                         show: false,
                         min: minYi,
-                        max: Math.max.apply(Math, maxY) + 1
+                        max: Math.max.apply(Math, maxY.concat(baseline)) + 1
                     };
                 }
             } else {
@@ -325,14 +440,14 @@ function updateChart(chartDIV, datajson, option) {
                         weight: "normal",
                         family: "Trebuchet, Arial, sans-serif",
                         variant: "small-caps",
-                        color: colori[i]
+                        color: feedlinecolori[i]
                     }
                 };
                 if (count <= 1) {
                     yaxes[yaxes.length - 1].font.color = "black";
                 }
                 if (option.yzero) {
-                    var minYi = Math.min.apply(Math, minY);
+                    var minYi = Math.min.apply(Math, minY.concat(baseline));
                     if (minYi > 0) {
                         minYi = 0;
                     }
@@ -354,6 +469,38 @@ function updateChart(chartDIV, datajson, option) {
             "font-weight": "normal",
             // 'background-color': "#F1F1F1",
         }).appendTo("#" + chartDIV);
+        var baselinecolori = [];
+        var baselinecolorcount = 0;
+        if (baseline.length != 0) {
+            var first = chartdata[0]["data"][0][0];
+            var last = chartdata[0]["data"][chartdata[0]["data"].length - 1][0];
+            for (var i = 0; i <= chartdata.length - 1; i++) {
+                if (chartdata[i]["data"][0][0] < first) {
+                    first = chartdata[i]["data"][0][0];
+                }
+                if (chartdata[i]["data"][chartdata[i]["data"].length - 1][0] > last) {
+                    last = chartdata[i]["data"][chartdata[0]["data"].length - 1][0];
+                }
+            }
+            var numcolor = baselinecolor.length;
+            for (var i = 0; i <= baseline.length - 1; i++) {
+                var baselinedata = {
+                    data: [
+                        [first, baseline[i]],
+                        [last, baseline[i]]
+                    ],
+                    lines: { show: true, fill: false , dash:dash}
+                }
+                chartdata.push(baselinedata)
+                if (baselinecolorcount >= baselinecolor.length) {
+                    baselinecolori[baselinecolori.length] = baselinecolor[i % numcolor];
+                } else {
+                    baselinecolori[baselinecolorcount] = baselinecolor[baselinecolorcount]
+                }
+                baselinecolorcount = baselinecolorcount + 1;
+            }
+        }
+        var linecolor = feedlinecolori.concat(baselinecolori);
         var plot = $.plot("#" + chartDIV + "_graph", chartdata, {
             legend: {
                 show: true,
@@ -362,13 +509,13 @@ function updateChart(chartDIV, datajson, option) {
                 labelFormatter: function(label, series) {
                     uniti = "";
                     for (var i = unit.length - 1; i >= 0; i--) {
-                        if(unit[i][0]==label){
-                            if(unit[i][1].length>0){
-                                uniti = "("+unit[i][1]+")"
+                        if (unit[i][0] == label) {
+                            if (unit[i][1].length > 0) {
+                                uniti = "(" + unit[i][1] + ")"
                             }
                         }
                     }
-                    return '&nbsp;' + label.toUpperCase() +uniti.toUpperCase();
+                    return '&nbsp;' + label.toUpperCase() + uniti.toUpperCase();
                 }
             },
             series: optionGraph,
@@ -377,7 +524,7 @@ function updateChart(chartDIV, datajson, option) {
                 clickable: false
             },
             yaxes: yaxes,
-            color: colori,
+            color: linecolor,
             xaxis: {
                 mode: "time",
                 timezone: "browser",
@@ -417,23 +564,32 @@ function updateChart(chartDIV, datajson, option) {
                     var listDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                     var listMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                     var uniti = "";
-                    var lastindex = item.series.data.length-1;
+                    var lastindex = item.series.data.length - 1;
                     for (var i = unit.length - 1; i >= 0; i--) {
-                        if(unit[i][0]==item.series.label){
+                        if (unit[i][0] == item.series.label) {
                             uniti = unit[i][1];
                         }
                     }
-                    var tooltiptext = listDays[newDate.getDay()] + " " + listMonths[newDate.getMonth()] + " " + n(newDate.getDate()) + " " + newDate.getFullYear() + " " + n(newDate.getHours()) + ":" + n(newDate.getMinutes()) + ":" + n(newDate.getSeconds()) + "<br>" + item.series.label + " = " + y+" "+uniti;
-                    if(item.dataIndex+2>lastindex){
+                    var tooltiptext;
+                    if (item.series.label !== undefined) {
+                        tooltiptext = listDays[newDate.getDay()] + " " + listMonths[newDate.getMonth()] + " " + n(newDate.getDate()) + " " + newDate.getFullYear() + " " + n(newDate.getHours()) + ":" + n(newDate.getMinutes()) + ":" + n(newDate.getSeconds()) + "<br>" + item.series.label + " = " + y + " " + uniti;
+                        if (item.dataIndex + 2 > lastindex) {
+                            $("#tooltip").html(tooltiptext).css({
+                                top: item.pageY + 15,
+                                left: item.pageX - 70
+                            }).fadeIn(200);
+                        } else {
+                            $("#tooltip").html(tooltiptext).css({
+                                top: item.pageY + 15,
+                                left: item.pageX + 5
+                            }).fadeIn(200);
+                        }
+                    } else {
+                        tooltiptext = "baseline" + " = " + y;
+
                         $("#tooltip").html(tooltiptext).css({
-                        top: item.pageY + 15,
-                        left: item.pageX - 70
-                        }).fadeIn(200);
-                    }
-                    else{
-                        $("#tooltip").html(tooltiptext).css({
-                        top: item.pageY + 15,
-                        left: item.pageX + 5
+                            top: item.pageY + 15,
+                            left: item.pageX - 50
                         }).fadeIn(200);
                     }
                 } else {
@@ -483,16 +639,16 @@ function updateChart(chartDIV, datajson, option) {
                     })
                 }
 
-                
+
             }
         }
         if ($("#" + chartDIV).height() <= 400) {
-            var top =(84+ ($("#" + chartDIV+ '_legend').position().top/47)-2.5)
+            var top = (84 + ($("#" + chartDIV + '_legend').position().top / 47) - 2.5)
             $('#' + chartDIV + '_legend').css({
                 top: top + "%"
             })
         }
-        
+
     } catch (err) {
         document.getElementById(chartDIV).innerHTML = oldgraph;
     }
@@ -1073,8 +1229,8 @@ Licensed under the MIT license.
                         fill: false,
                         fillColor: null,
                         steps: false
-                            // Omit 'zero', so we can later default its value to
-                            // match that of the 'fill' option.
+                        // Omit 'zero', so we can later default its value to
+                        // match that of the 'fill' option.
                     },
                     bars: {
                         show: false,
@@ -1771,8 +1927,8 @@ Licensed under the MIT license.
             // data point to canvas coordinate
             if (t == identity) // slight optimization
                 axis.p2c = function(p) {
-                return (p - m) * s;
-            };
+                    return (p - m) * s;
+                };
             else axis.p2c = function(p) {
                 return (t(p) - m) * s;
             };
@@ -2032,8 +2188,8 @@ Licensed under the MIT license.
             var noTicks;
             if (typeof opts.ticks == "number" && opts.ticks > 0) noTicks = opts.ticks;
             else
-            // heuristic based on the model a*sqrt(x) fitted to
-            // some data points that seemed reasonable
+                // heuristic based on the model a*sqrt(x) fitted to
+                // some data points that seemed reasonable
                 noTicks = 0.3 * Math.sqrt(axis.direction == "x" ? surface.width : surface.height);
             var delta = (axis.max - axis.min) / noTicks,
                 dec = -Math.floor(Math.log(delta) / Math.LN10),
@@ -2145,7 +2301,7 @@ Licensed under the MIT license.
             if (oticks == null || (typeof oticks == "number" && oticks > 0)) ticks = axis.tickGenerator(axis);
             else if (oticks) {
                 if ($.isFunction(oticks))
-                // generate the ticks
+                    // generate the ticks
                     ticks = oticks(axis);
                 else ticks = oticks;
             }
@@ -2347,7 +2503,8 @@ Licensed under the MIT license.
                     xoff = yoff = 0;
                     if (isNaN(v) || v < axis.min || v > axis.max
                         // skip those lying on the axes if we got a border
-                        || (t == "full" && ((typeof bw == "object" && bw[axis.position] > 0) || bw > 0) && (v == axis.min || v == axis.max))) continue;
+                        ||
+                        (t == "full" && ((typeof bw == "object" && bw[axis.position] > 0) || bw > 0) && (v == axis.min || v == axis.max))) continue;
                     if (axis.direction == "x") {
                         x = axis.p2c(v);
                         yoff = t == "full" ? -plotHeight : t;
@@ -2531,6 +2688,9 @@ Licensed under the MIT license.
                     if (x1 != prevx || y1 != prevy) ctx.moveTo(axisx.p2c(x1) + xoffset, axisy.p2c(y1) + yoffset);
                     prevx = x2;
                     prevy = y2;
+                    if(series.lines.dash){ 
+                        ctx.setLineDash([15, 15]);
+                    }
                     ctx.lineTo(axisx.p2c(x2) + xoffset, axisy.p2c(y2) + yoffset);
                 }
                 ctx.stroke();

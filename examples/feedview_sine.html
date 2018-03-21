@@ -4,20 +4,23 @@
 var feedid = "feedid";
 var apikey = "apikey";
 var granularity = "1minutes"; //ex. 15seconds,15minutes,1hours,1days
-var since = "1hours"; //ex. 1hours,1days,1months
+var since = "20minutes"; //ex. 1hours,1days,1months
 var option = {
     title: "title", //text
     xaxis: "time", //text
     yaxis: "value", //text
-    multipleaxis: true, //true,false
+    multipleaxis: false, //true,false
     yzero: false, //true,false
-    color: "pink,blue,yellow",
+    feedlinecolor: "pink,blue,yellow",
+    baselinecolor: "pink,blue,yellow",
     type: "line", //line,step 
     marker: true, //true,false
     filter: "", //field name
-    autogap: true //true,false
+    autogap: false, //true,false
+    baseline: "", //60,110
+    fill: false, //true,false
+    typebaseline: "solid" //solid,dash
 }
-
 //ex. since
 setInterval(function insertGraph() {
     $.getJSON("https://api.netpie.io/feed/" + feedid + "?apikey=" + apikey + "&granularity=" + granularity + "&since=" + since,
@@ -50,7 +53,7 @@ function export_csv() {
             //error
         }
     };
-    xhttp.open("GET", "https://api.netpie.io/feed/"+ feedid + param, true);
+    xhttp.open("GET", "https://api.netpie.io/feed/" + feedid + param, true);
     xhttp.timeout = 10000;
     xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     xhttp.send();

@@ -10,13 +10,17 @@ var option = {
     title: "title", //text
     xaxis: "time", //text
     yaxis: "value", //text
-    multipleaxis: true, //true,false
+    multipleaxis: false, //true,false
     yzero: false, //true,false
-    color: "pink,blue,yellow",
+    feedlinecolor: "pink,blue,yellow",
+    baselinecolor: "pink,blue,yellow",
     type: "line", //line,step 
     marker: true, //true,false
     filter: "", //field name
-    autogap: true //true,false
+    autogap: false, //true,false
+    baseline: "", //60,110
+    fill: false, //true,false
+    typebaseline: "solid" //solid,dash
 }
 
 // ex. from..to..
