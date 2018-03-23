@@ -85,7 +85,9 @@ function updateChart(chartDIV, datajson, option) {
     var baselinecolor;
     var unit = [];
     var baseline = [];
-        var dash = false;
+    var dash = false;
+    var showbaseline = false;
+    var multipleaxis = false;
     $("#" + chartDIV).empty();
     // }
     $('#' + chartDIV).css({
@@ -166,7 +168,7 @@ function updateChart(chartDIV, datajson, option) {
                     dash = true;
                 }
             }
-            
+
         }
         // $('#' + chartDIV).css({
         //     width: "100%",
@@ -469,9 +471,12 @@ function updateChart(chartDIV, datajson, option) {
             "font-weight": "normal",
             // 'background-color': "#F1F1F1",
         }).appendTo("#" + chartDIV);
+        if (multipleaxis == false || count==1) {
+            showbaseline = true;
+        }
         var baselinecolori = [];
         var baselinecolorcount = 0;
-        if (baseline.length != 0) {
+        if (baseline.length != 0 && showbaseline==true) {
             var first = chartdata[0]["data"][0][0];
             var last = chartdata[0]["data"][chartdata[0]["data"].length - 1][0];
             for (var i = 0; i <= chartdata.length - 1; i++) {
@@ -489,7 +494,7 @@ function updateChart(chartDIV, datajson, option) {
                         [first, baseline[i]],
                         [last, baseline[i]]
                     ],
-                    lines: { show: true, fill: false , dash:dash}
+                    lines: { show: true, fill: false, dash: dash }
                 }
                 chartdata.push(baselinedata)
                 if (baselinecolorcount >= baselinecolor.length) {
@@ -2688,7 +2693,7 @@ Licensed under the MIT license.
                     if (x1 != prevx || y1 != prevy) ctx.moveTo(axisx.p2c(x1) + xoffset, axisy.p2c(y1) + yoffset);
                     prevx = x2;
                     prevy = y2;
-                    if(series.lines.dash){ 
+                    if (series.lines.dash) {
                         ctx.setLineDash([15, 15]);
                     }
                     ctx.lineTo(axisx.p2c(x2) + xoffset, axisy.p2c(y2) + yoffset);
