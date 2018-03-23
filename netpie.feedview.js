@@ -658,7 +658,11 @@ function updateChart(chartDIV, datajson, option) {
         document.getElementById(chartDIV).innerHTML = oldgraph;
     }
     $(window).resize(function() {
-        updateChart(chartDIV, datajson, option);
+        clearTimeout(window.resizedFinished);
+        window.resizedFinished = setTimeout(function() {
+            updateChart(chartDIV, datajson, option);
+            console.log('Resized finished.');
+        }, 200);
     });
 }
 /* Javascript plotting library for jQuery, version 0.8.3.
